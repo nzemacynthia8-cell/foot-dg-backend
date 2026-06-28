@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-const PORT = 3000;
+// ⚠️ Render impose process.env.PORT
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -39,43 +40,44 @@ const championnats = {
 };
 
 // --- Routes principales ---
+app.get('/', (req, res) => {
+  res.send("✅ Backend Foot-DG en ligne !");
+});
+
 app.get('/jouer', (req, res) => {
   res.json({ message: "⚽ Mode JEU : Lancez un match en direct !" });
 });
 
-// ⚠️ Correction : route /equipes (pas /club)
 app.get('/equipes', (req, res) => {
   res.json({ equipes: ["Real Madrid", "Barça", "Liverpool", "PSG", "Monaco"] });
 });
 
-// TROPHÉES
 app.get('/trophees', (req, res) => {
   res.json({ trophees: ["Coupe d'Europe", "Champion League"] });
 });
 
-// COMPÉTITIONS
 app.get('/championnats', (req, res) => {
   res.json(championnats);
 });
 
-// BOUTIQUE
 app.get('/boutique', (req, res) => {
   res.json({ joueurs: boutique });
 });
 
-// --- Monnaies ---
 app.get('/currencies', (req, res) => {
   res.json({ diamonds: utilisateur.diamonds, coins: utilisateur.coins });
 });
 
-// --- Gagner un match ---
 app.post('/match', (req, res) => {
   utilisateur.coins += 500;
   utilisateur.diamonds += 10;
-  res.json({ message: "✅ Match gagné !", diamonds: utilisateur.diamonds, coins: utilisateur.coins });
+  res.json({
+    message: "✅ Match gagné !",
+    diamonds: utilisateur.diamonds,
+    coins: utilisateur.coins
+  });
 });
 
-// --- Acheter un joueur ---
 app.post('/acheter', (req, res) => {
   const joueurId = req.body.id;
   const joueur = boutique.find(j => j.id === joueurId);
