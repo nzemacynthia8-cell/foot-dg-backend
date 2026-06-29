@@ -64,20 +64,40 @@ app.get('/boutique', (req, res) => {
   res.json({ joueurs: boutique });
 });
 
+// --- Monnaies ---
 app.get('/currencies', (req, res) => {
   res.json({ diamonds: utilisateur.diamonds, coins: utilisateur.coins });
 });
 
+// --- Gagner un match avec simulation ---
 app.post('/match', (req, res) => {
-  utilisateur.coins += 500;
-  utilisateur.diamonds += 10;
+  const toutesEquipes = ["Real Madrid", "Barça", "Liverpool", "PSG", "Monaco", "Chelsea", "Arsenal"];
+  const equipe1 = toutesEquipes[Math.floor(Math.random() * toutesEquipes.length)];
+  const equipe2 = toutesEquipes[Math.floor(Math.random() * toutesEquipes.length)];
+
+  const score1 = Math.floor(Math.random() * 5);
+  const score2 = Math.floor(Math.random() * 5);
+
+  let message;
+  if (score1 > score2) {
+    message = `✅ Victoire de ${equipe1} contre ${equipe2} (${score1} - ${score2}) !`;
+    utilisateur.coins += 500;
+    utilisateur.diamonds += 10;
+  } else if (score2 > score1) {
+    message = `❌ Défaite de ${equipe1} contre ${equipe2} (${score1} - ${score2})...`;
+  } else {
+    message = `🤝 Match nul entre ${equipe1} et ${equipe2} (${score1} - ${score2}) !`;
+    utilisateur.coins += 200;
+  }
+
   res.json({
-    message: "✅ Match gagné !",
+    message,
     diamonds: utilisateur.diamonds,
     coins: utilisateur.coins
   });
 });
 
+// --- Acheter un joueur ---
 app.post('/acheter', (req, res) => {
   const joueurId = req.body.id;
   const joueur = boutique.find(j => j.id === joueurId);
